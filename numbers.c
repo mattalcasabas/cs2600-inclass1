@@ -24,3 +24,95 @@ Matthew Alcasabas
 	a. Print "Thanks for playing!"
 	b. Exit
 */
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool playAgain = false;
+
+int randInt(int a, int b) {
+	int r;
+	r = a + rand() % (b-a+1);
+	return r;
+}
+
+void startGame(int max);
+
+int main() {
+      unsigned int choice;
+      unsigned int maxNumber = 10, userInput;
+      restartGame: ;
+           time_t t;
+           srand((unsigned) time(&t));
+
+      printf("Press 1 to start game\nPress 2 to change max number\nPress 3 to quit\n");
+      scanf("%d", &choice);
+      switch(choice) {
+         case 1:
+            playAgain = false;
+            while(!playAgain) {
+               startGame(maxNumber);
+            }
+            goto restartGame;
+         case 2:
+            printf("Please enter a max number (between 1 and RAND_MAX)\n");
+            bool validInput = false;
+            while(!validInput) {
+               scanf("%d", &userInput);
+               if(userInput < 1) {
+                  printf("Max number should be greater than 1.\n");
+               }
+               else if (userInput > RAND_MAX) {
+                  printf("Max number is too high.\n");
+               }
+               else {
+                  printf("New max number set to %d.\n", userInput);
+                  validInput = true;
+               }
+            maxNumber = userInput;
+            while(!playAgain) {
+               startGame(maxNumber);
+            }
+            goto restartGame;
+         case 3:
+            printf("Thanks for playing!\n");
+            return 0;
+         default:
+            printf("Invalid choice. Please choose 1, 2, or 3.\n");
+            goto restartGame;
+      }
+      return 0;
+}
+}
+
+void startGame(int max) {
+	int randNumber = randInt(1, max);
+	bool playerWon = false;
+	while(!playerWon) {
+      int userInput;
+		printf("Pick a number between 1 and %d, or enter q to exit to main menu.\n", max);
+      scanf("%d", &userInput);
+      char checkForExit = getchar();
+		if(userInput == randNumber) {
+			printf("You win!\n");
+			playerWon = true;
+         playAgain = true;
+		}
+      else if(checkForExit == 'q') {
+         printf("Returning to main menu.\n");
+         main();
+      }
+		else if(userInput < randNumber) {
+			printf("Too low, please try again!\n");
+		}
+		else if(userInput > randNumber) {
+			printf("Too high, please try again!\n");
+		}
+      else {
+			printf("Unknown input, please try again!\n");
+         break;
+		}
+	}
+}
